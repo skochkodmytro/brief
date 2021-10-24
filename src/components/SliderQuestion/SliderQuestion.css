@@ -1,0 +1,9 @@
+.slider-question-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-wrapper {
+    flex: 1;
+}

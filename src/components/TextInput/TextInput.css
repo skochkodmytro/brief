@@ -1,0 +1,16 @@
+.text-input {
+    display: block;
+    padding: 0;
+    background: transparent;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.ant-input:focus, .ant-input-focused {
+    box-shadow: none;
+}
+
+.text-input::placeholder {
+    color: gray;
+}

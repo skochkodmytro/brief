@@ -1,0 +1,9 @@
+.question-controller {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    align-content: stretch;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    border-bottom: 2px solid gray;
+}

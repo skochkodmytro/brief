@@ -1,0 +1,13 @@
+.add-question-control {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: #535353;
+    color: #808080;
+    box-sizing: border-box;
+}

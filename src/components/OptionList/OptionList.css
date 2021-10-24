@@ -1,0 +1,34 @@
+.option-list {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.option-item-container {
+    margin-bottom: 30px;
+}
+
+.add-option-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.add-option-checkbox {
+    margin-right: 10px;
+}
+
+.option-item-custom-field {
+    display: flex;
+    align-items: center;
+}
+
+.custom-field-checkbox {
+    margin-right: 20px;
+}
+
+.custom-field-title {
+    flex: 1;
+    font-size: 18px;
+}
