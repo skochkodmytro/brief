@@ -1,17 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { connect } from "react-redux";
-import { Button } from "@mui/material";
-import { useForm, Controller } from 'react-hook-form';
+import { Alert, Button, Snackbar } from "@mui/material";
 
 import "./CreateBriefPage.css";
 
-import { addQuestion, updateBrief } from "../store/new-brief/new-brief-actions";
+import { addQuestion, updateBrief } from "../../store/new-brief/new-brief-actions";
 
-import { AppState } from "../store/rootStore";
-import { TextInput } from "../components/TextInput/TextInput";
-import { AddQuestion } from "../components/AddQuestion/AddQuestion";
-import { QuestionTypesEnum } from "../enums";
-import { QuestionContainer } from "../components/QuestionContainer/QuestionContainer";
+import { AppState } from "../../store/rootStore";
+import { TextInput } from "../../components/TextInput/TextInput";
+import { AddQuestion } from "../../components/AddQuestion/AddQuestion";
+import { QuestionTypesEnum } from "../../enums";
+import { QuestionContainer } from "../../components/QuestionContainer/QuestionContainer";
 
 type MapStatePropsType = {
     brief: BriefType
@@ -25,7 +24,8 @@ type MapDispatchPropsType = {
 type PropsType = MapStatePropsType & MapDispatchPropsType;
 
 const CreateBriefPage: FC<PropsType> = ({ brief, updateBrief, addQuestion}) => {
-    const { control, register, handleSubmit } = useForm();
+    const [showErrors, setShowErrors] = useState<boolean>(false)
+    const [showErrorSnackBar, setShowErrorSnackBar] = useState<boolean>(false)
 
     const handleChangeBriefName = (name: string) => {
         updateBrief({ ...brief, name });
@@ -72,6 +72,7 @@ const CreateBriefPage: FC<PropsType> = ({ brief, updateBrief, addQuestion}) => {
             <QuestionContainer
                 key={index}
                 question={q}
+                showErrors={showErrors}
                 index={index}
                 changeQuestion={(q: QuestionType) => handleUpdateQuestion(q, index)}
                 removeQuestion={handleRemoveQuestion}
@@ -79,42 +80,77 @@ const CreateBriefPage: FC<PropsType> = ({ brief, updateBrief, addQuestion}) => {
         ))
     }
 
-    const onSubmit = (data: any) => {
-        console.log(data);
+    const handleCloseSnackBar = () => {
+        setShowErrorSnackBar(false);
+    }
+
+    const onSubmit = () => {
+        const { name, description, questions } = brief;
+        let isError = false;
+
+        if (!name || !description || questions.some(q => !q.name)) {
+            isError = true
+        }
+
+        questions.forEach(q => {
+            if (q.options && q.options.some(o => !o.name)) {
+                isError = true
+            }
+
+            if ((q.from !== undefined && q.to !== undefined) && (!q.from || !q.to)) {
+                isError = true;
+            }
+        })
+
+        if (isError) {
+            setShowErrors(true);
+            setShowErrorSnackBar(true);
+        } else {
+            setShowErrors(false);
+            console.log(1);
+        }
     }
 
     return (
-        <div className="container create-brief-page">
+        <div className="create-brief-page">
             <form>
                 <div className="brief-wrapper">
                     <header className="create-brief-page-header">
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="create-brief-page-header-item">
-                                <TextInput
-                                    value={brief.name}
-                                    placeholder="Brief name"
-                                    onChange={handleChangeBriefName}
-                                    fontSize={32}
-                                />
-                            </div>
-                            <div className="create-brief-page-header-item">
-                                <TextInput
-                                    value={brief.description}
-                                    onChange={handleChangeBriefDesc}
-                                    placeholder="Description"
-                                />
-                            </div>
-                            <Button variant="contained" type="submit">Submit</Button>
-                        </form>
+                        <div className="create-brief-page-header-item">
+                            <TextInput
+                                error={showErrors && !brief.name}
+                                value={brief.name}
+                                placeholder="Brief name"
+                                onChange={handleChangeBriefName}
+                                fontSize={32}
+                            />
+                        </div>
+                        <div className="create-brief-page-header-item">
+                            <TextInput
+                                error={showErrors && !brief.description}
+                                value={brief.description}
+                                onChange={handleChangeBriefDesc}
+                                placeholder="Description"
+                            />
+                        </div>
                     </header>
 
                     <div className="questions-container">
                         {renderQuestionsList()}
                     </div>
 
-                    <Button variant="contained">Create brief</Button>
+                    <Button variant="contained" onClick={onSubmit}>Create brief</Button>
                 </div>
             </form>
+
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={showErrorSnackBar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackBar}
+            >
+                <Alert severity="error">Brief is not fill</Alert>
+            </Snackbar>
 
             <AddQuestion addQuestion={handleAddQuestion} />
         </div>

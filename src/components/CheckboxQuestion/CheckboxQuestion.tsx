@@ -7,11 +7,12 @@ import { OptionList } from "../OptionList/OptionList";
 
 type OwnTypes = {
     question: QuestionType
+    showErrors: boolean
 
     onChange: (question: QuestionType) => void
 }
 
-export const CheckboxQuestion: FC<OwnTypes> = ({  question, onChange }) => {
+export const CheckboxQuestion: FC<OwnTypes> = ({  question, showErrors, onChange }) => {
 
     const handleChangeOptions = (options: Array<OptionType>) => {
         onChange({ ...question, options });
@@ -26,6 +27,7 @@ export const CheckboxQuestion: FC<OwnTypes> = ({  question, onChange }) => {
         <>
             <OptionList
                 options={question.options || []}
+                showErrors={showErrors}
                 hasCustomField={question.hasCustomFieldForFill || false}
                 countRow={question.countRow || 1}
                 isRadioList={false}

@@ -16,3 +16,11 @@ code {
   width: 960px;
   margin: 0 auto;
 }
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: inherit;
+}

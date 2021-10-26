@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Card } from "@mui/material";
 
 import { QuestionController } from "../QuestionController/QuestionController";
 import { QuestionNaming } from "../QuestionNaming/QuestionNaming";
@@ -8,17 +9,18 @@ import { DateQuestion } from "../DateQuestion/DateQuestion";
 import { SliderQuestion } from "../SliderQuestion/SliderQuestion";
 import { NumberQuestion } from "../NmberQuestion/NmberQuestion";
 import { CheckboxQuestion } from "../CheckboxQuestion/CheckboxQuestion";
-import { Card } from "@mui/material";
 
 type OwnProps = {
     question: QuestionType
     index: number
+    showErrors: boolean
 
     changeQuestion: (question: QuestionType) => void
     removeQuestion: (index: number) => void
 }
 
 export const QuestionContainer: FC<OwnProps> = ({ question, index, changeQuestion,
+                                                    showErrors,
                                                     removeQuestion }) => {
 
     const handleChangeNameQuestion = (name: string) => {
@@ -49,12 +51,14 @@ export const QuestionContainer: FC<OwnProps> = ({ question, index, changeQuestio
                 return <DateQuestion question={question} />
             case QuestionTypesEnum.Slider:
                 return <SliderQuestion
-                    question={question} onChangeQuestion={(q: QuestionType) => changeQuestion(q)}
+                    question={question}
+                    showErrors={showErrors}
+                    onChangeQuestion={(q: QuestionType) => changeQuestion(q)}
                 />
             case QuestionTypesEnum.Number:
                 return <NumberQuestion />
             case QuestionTypesEnum.Checkbox:
-                return <CheckboxQuestion question={question} onChange={handleChangeCheckboxQuestion} />
+                return <CheckboxQuestion showErrors={showErrors} question={question} onChange={handleChangeCheckboxQuestion} />
             default:
                 return <div>Some unknown type</div>
         }
@@ -74,6 +78,7 @@ export const QuestionContainer: FC<OwnProps> = ({ question, index, changeQuestio
                 <div className="question-data">
                     <QuestionNaming
                         question={question}
+                        showErrors={showErrors}
                         onChangeName={handleChangeNameQuestion}
                         onChangeDescription={handleChangeDescriptionQuestion}
                     />

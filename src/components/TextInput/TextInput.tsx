@@ -10,6 +10,7 @@ type OwnProps = {
     fontSize?: number
     style?: React.CSSProperties
     fullWidth?: boolean
+    error?: boolean
 
     onChange: (value: string) => void
 }
@@ -17,6 +18,7 @@ type OwnProps = {
 export const TextInput: FC<OwnProps> = ({ value,
                                             onChange,
                                             style= {},
+                                            error = false,
                                             fullWidth= true,
                                             placeholder }) => {
 
@@ -31,6 +33,7 @@ export const TextInput: FC<OwnProps> = ({ value,
             size="medium"
             multiline
             fullWidth={fullWidth}
+            error={error}
             value={value}
             onChange={handleChange}
         />

@@ -1,23 +1,23 @@
 import React, { ChangeEvent, FC, useRef } from 'react';
 import { FileImageOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Checkbox } from 'antd';
+import { Card, CardContent, Checkbox } from "@mui/material";
 
 import './OptionItem.css';
 import { TextInput } from "../TextInput/TextInput";
 import { ImagePreview } from "../ImagePreview/ImagePreview";
-import { Card, CardContent, CardMedia } from "@mui/material";
-import Typography from "@mui/material/Typography";
 
 type OwnProps = {
     option: OptionType
     index: number
     canBeDelete: boolean
+    showErrors: boolean
 
     onChange: (option: OptionType) => void
     onDelete: () => void
 }
 
 export const OptionItem: FC<OwnProps> = ({ option, index,
+                                             showErrors,
                                              canBeDelete,
                                              onChange, onDelete }) => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +66,7 @@ export const OptionItem: FC<OwnProps> = ({ option, index,
                     </div>
                     <div className="option-container-input">
                         <TextInput
+                            error={showErrors && !option.name}
                             value={option.name}
                             placeholder={'Option ' + (index + 1)}
                             onChange={handleChangeName}

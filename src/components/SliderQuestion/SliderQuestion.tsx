@@ -6,11 +6,12 @@ import { Slider } from "antd";
 
 type OwnProps = {
     question: QuestionType
+    showErrors: boolean
 
     onChangeQuestion: (question: QuestionType) => void
 }
 
-export const SliderQuestion: FC<OwnProps> = ({ question, onChangeQuestion }) => {
+export const SliderQuestion: FC<OwnProps> = ({ question, onChangeQuestion, showErrors }) => {
 
     const handleChangeFrom = (from: string) => {
         onChangeQuestion({ ...question, from });
@@ -23,11 +24,21 @@ export const SliderQuestion: FC<OwnProps> = ({ question, onChangeQuestion }) => 
     return (
         <div className="text-question-container slider-question-container">
             <div>
-                <TextInput value={question.from || ''} onChange={handleChangeFrom}  placeholder="From" style={{ textAlign: 'center' }} />
+                <TextInput
+                    error={showErrors && !question.from}
+                    value={question.from || ''}
+                    onChange={handleChangeFrom}
+                    placeholder="From" style={{ textAlign: 'center' }}
+                />
             </div>
             <Slider defaultValue={50} disabled={true} className="slider-wrapper" />
             <div>
-                <TextInput value={question.to || ''} onChange={handleChangeTo} placeholder="To" style={{ textAlign: 'center' }} />
+                <TextInput
+                    error={showErrors && !question.to}
+                    value={question.to || ''}
+                    onChange={handleChangeTo}
+                    placeholder="To" style={{ textAlign: 'center' }}
+                />
             </div>
         </div>
     )

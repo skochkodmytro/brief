@@ -10,11 +10,12 @@ type OwnProps = {
     isRadioList: boolean
     countRow: number
     hasCustomField: boolean
+    showErrors: boolean
 
     onChange: (options: Array<OptionType>) => void
 }
 
-export const OptionList: FC<OwnProps> = ({ options, onChange, countRow, hasCustomField }) => {
+export const OptionList: FC<OwnProps> = ({ options, onChange, countRow, showErrors, hasCustomField }) => {
     const flexWidth = countRow === 1 ? 100 : 45;
 
     const handleChangeOption = (option: OptionType, index: number) => {
@@ -38,6 +39,7 @@ export const OptionList: FC<OwnProps> = ({ options, onChange, countRow, hasCusto
                 <OptionItem
                     index={index}
                     option={option}
+                    showErrors={showErrors}
                     canBeDelete={options.length > 2}
                     onChange={(o) => handleChangeOption(o, index)}
                     onDelete={() => deleteOption(index)}
