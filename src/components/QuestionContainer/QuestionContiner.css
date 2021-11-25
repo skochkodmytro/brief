@@ -3,5 +3,5 @@
 }
 
 .question-container {
-    margin-bottom: 30px;
+    flex: 1;
 }

@@ -2,6 +2,13 @@ import React, { FC } from 'react';
 import moment from 'moment';
 import { Controller, FieldArrayWithId, FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@mui/material";
+import {
+    Droppable,
+    Draggable,
+    DragDropContext,
+    DropResult,
+} from "react-beautiful-dnd";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 import "./CreateBriefPage.css";
 
@@ -15,7 +22,7 @@ export const CreateBriefPage: FC = () => {
         mode: "onChange"
     })
     const { control, handleSubmit, formState } = methods;
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append, remove, move } = useFieldArray({
         control,
         name: "questions",
     });
@@ -36,7 +43,7 @@ export const CreateBriefPage: FC = () => {
         }
 
         if (type === QuestionTypesEnum.Date) {
-            newQuestion.defaultDate = moment().add(7, 'd');;
+            newQuestion.defaultDate = moment().add(7, 'd');
         }
 
         append(newQuestion);
@@ -46,15 +53,64 @@ export const CreateBriefPage: FC = () => {
         remove(index);
     }
 
+    const handleDragEnd = (data: DropResult) => {
+        if (!data.destination) {
+            return
+        }
+        const indexFrom = data.source.index;
+        const indexTo = data.destination.index;
+
+        move(indexFrom, indexTo);
+    }
+
+    const getItemDragStyle = (isDragging: boolean, draggableStyle: any) => {
+        return {
+            display: 'flex',
+            margin: `0 0 30px 0`,
+            ...draggableStyle
+        }
+    };
+
     const renderQuestionsList = () => {
-        return fields.map((q: FieldArrayWithId<QuestionType>, index: number) => (
-            <QuestionContainer
-                key={q.id}
-                question={q}
-                index={index}
-                removeQuestion={handleRemoveQuestion}
-            />
-        ))
+        return (
+            <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="droppable">
+                    {(provided, snapshot) => (
+                        <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                        >
+                            {fields.map((q: FieldArrayWithId<QuestionType>, index: number) => (
+                                <Draggable key={q.id} draggableId={q.id} index={index}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            style={getItemDragStyle(
+                                                snapshot.isDragging,
+                                                provided.draggableProps.style
+                                            )}
+                                        >
+                                            <div {...provided.dragHandleProps} className="custom-draggable">
+                                                <DragIndicatorIcon />
+                                            </div>
+
+                                            <QuestionContainer
+                                                question={q}
+                                                index={index}
+                                                removeQuestion={handleRemoveQuestion}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
+        )
     }
 
     const submitForm = (data: any) => {
@@ -104,6 +160,8 @@ export const CreateBriefPage: FC = () => {
                             {renderQuestionsList()}
                         </div>
 
+                        <AddQuestion addQuestion={handleAddQuestion} />
+
                         <Button
                             variant="contained"
                             type="submit"
@@ -112,10 +170,9 @@ export const CreateBriefPage: FC = () => {
                             Create brief
                         </Button>
                     </div>
+
                 </form>
             </FormProvider>
-
-            <AddQuestion addQuestion={handleAddQuestion} />
         </div>
     )
 }

@@ -19,6 +19,9 @@
     margin: 15px 0;
 }
 
-.questions-container {
-    margin-bottom: 30px;
+.custom-draggable {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
