@@ -13,9 +13,11 @@ import { CheckboxQuestion } from "../CheckboxQuestion/CheckboxQuestion";
 type OwnProps = {
     question: any
     index: number
+
+    removeQuestion: (index: number) => void
 }
 
-export const QuestionContainer: FC<OwnProps> = ({ question, index }) => {
+export const QuestionContainer: FC<OwnProps> = ({ question, index, removeQuestion }) => {
     const renderQuestionType = () => {
         switch (question.questionType) {
             case QuestionTypesEnum.Date:
@@ -38,6 +40,7 @@ export const QuestionContainer: FC<OwnProps> = ({ question, index }) => {
                 <QuestionController
                     question={question}
                     index={index}
+                    removeQuestion={removeQuestion}
                 />
                 <div className="question-data">
                     <QuestionNaming

@@ -32,6 +32,10 @@ export const OptionList: FC<OwnProps> = ({ countRow, hasCustomField, questionInd
         append({ name: '', defaultIsChecked: false, image: null });
     }
 
+    const handleRemoveOption = (index: number) => {
+        remove(index);
+    }
+
     const renderOptions = () => {
         return fields.map((option, index) => (
             <div key={option.id} className="option-item-container" style={{ width: flexWidth + '%' }}>
@@ -39,6 +43,7 @@ export const OptionList: FC<OwnProps> = ({ countRow, hasCustomField, questionInd
                     index={index}
                     questionIndex={questionIndex}
                     canBeDelete={options.length > 2}
+                    removeOption={handleRemoveOption}
                 />
             </div>
         ))

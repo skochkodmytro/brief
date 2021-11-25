@@ -12,9 +12,11 @@ type OwnProps = {
     index: number
     questionIndex: number
     canBeDelete: boolean
+
+    removeOption: (index: number) => void
 }
 
-export const OptionItem: FC<OwnProps> = ({ index, questionIndex, canBeDelete}) => {
+export const OptionItem: FC<OwnProps> = ({ index, questionIndex, canBeDelete, removeOption }) => {
     const { control, setValue } = useFormContext();
     const inputRef = useRef<HTMLInputElement>(null);
     const option = useWatch({
@@ -33,6 +35,10 @@ export const OptionItem: FC<OwnProps> = ({ index, questionIndex, canBeDelete}) =
         if (input.files) {
             setValue(`questions.${questionIndex}.options.${index}.image`, input.files[0]);
         }
+    }
+
+    const handleRemoveOption = () => {
+        removeOption(index);
     }
 
     return (
@@ -83,7 +89,7 @@ export const OptionItem: FC<OwnProps> = ({ index, questionIndex, canBeDelete}) =
                         </div>
                         {
                             canBeDelete &&
-                            <div className="option-container-icon">
+                            <div className="option-container-icon" onClick={handleRemoveOption}>
                                 <DeleteOutlined />
                             </div>
                         }

@@ -15,7 +15,7 @@ export const CreateBriefPage: FC = () => {
         mode: "onChange"
     })
     const { control, handleSubmit, formState } = methods;
-    const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+    const { fields, append } = useFieldArray({
         control,
         name: "questions",
     });
@@ -42,12 +42,17 @@ export const CreateBriefPage: FC = () => {
         append(newQuestion);
     }
 
+    const handleRemoveQuestion = (index: number) => {
+        remove(index);
+    }
+
     const renderQuestionsList = () => {
         return fields.map((q: FieldArrayWithId<QuestionType>, index: number) => (
             <QuestionContainer
                 key={q.id}
                 question={q}
                 index={index}
+                removeQuestion={handleRemoveQuestion}
             />
         ))
     }

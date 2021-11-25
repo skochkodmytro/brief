@@ -10,11 +10,16 @@ import { QuestionTypesEnum } from "../../enums";
 type OwnProps = {
     question: QuestionType
     index: number
+
+    removeQuestion: (index: number) => void
 }
 
-export const QuestionController: FC<OwnProps> = ({ question,
-                                                    index }) => {
+export const QuestionController: FC<OwnProps> = ({ question, removeQuestion, index }) => {
     const { control } = useFormContext();
+
+    const handleRemoveQuestion = () => {
+        removeQuestion(index);
+    }
 
     const renderQuestionType = () => {
         switch (question.questionType) {
@@ -85,7 +90,7 @@ export const QuestionController: FC<OwnProps> = ({ question,
                     )}
                 />
             </div>
-            <div className="controller-item">
+            <div className="controller-item" onClick={handleRemoveQuestion}>
                 <DeleteIcon
                     style={{ color: 'white', fontSize: 24, cursor: 'pointer' }}
                 />
