@@ -11,6 +11,14 @@
     padding: 0 15px;
 }
 
+.controller-item-type {
+    flex: 1;
+}
+
 .create-brief-page-header-item {
     margin: 15px 0;
+}
+
+.questions-container {
+    margin-bottom: 30px;
 }

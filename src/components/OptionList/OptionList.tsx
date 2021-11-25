@@ -1,48 +1,44 @@
 import React, { FC } from 'react';
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 
 import './OptionList.css';
 
 import { OptionItem } from "../OptionItem/OptionItem";
 import { Checkbox } from "antd";
+import { Button } from "@mui/material";
 
 type OwnProps = {
-    options: Array<OptionType>
     isRadioList: boolean
-    countRow: number
+    countRow: number | string
     hasCustomField: boolean
-    showErrors: boolean
-
-    onChange: (options: Array<OptionType>) => void
+    questionIndex: number
 }
 
-export const OptionList: FC<OwnProps> = ({ options, onChange, countRow, showErrors, hasCustomField }) => {
-    const flexWidth = countRow === 1 ? 100 : 45;
+export const OptionList: FC<OwnProps> = ({ countRow, hasCustomField, questionIndex}) => {
+    const { control } = useFormContext();
+    const { fields, remove, append } = useFieldArray({
+        control,
+        name: `questions.${questionIndex}.options`
+    });
+    const options = useWatch({
+        name: `questions.${questionIndex}.options`,
+        control
+    });
 
-    const handleChangeOption = (option: OptionType, index: number) => {
-        const newOptionsList = [...options];
-        newOptionsList[index] = option;
+    const countRowAsNumber = typeof countRow === 'string' ? parseInt(countRow) : countRow;
+    const flexWidth = countRowAsNumber === 1 ? 100 : 48;
 
-        onChange(newOptionsList);
-    }
-
-    const deleteOption = (index: number) => {
-        const newOptionList = [...options];
-        newOptionList.splice(index, 1);
-
-        onChange(newOptionList);
+    const addOption = () => {
+        append({ name: '', defaultIsChecked: false, image: null });
     }
 
     const renderOptions = () => {
-        const flexWidth = countRow === 1 ? 100 : 45;
-        return options.map((option, index) => (
-            <div key={index} className="option-item-container" style={{ width: flexWidth + '%' }}>
+        return fields.map((option, index) => (
+            <div key={option.id} className="option-item-container" style={{ width: flexWidth + '%' }}>
                 <OptionItem
                     index={index}
-                    option={option}
-                    showErrors={showErrors}
+                    questionIndex={questionIndex}
                     canBeDelete={options.length > 2}
-                    onChange={(o) => handleChangeOption(o, index)}
-                    onDelete={() => deleteOption(index)}
                 />
             </div>
         ))
@@ -65,6 +61,10 @@ export const OptionList: FC<OwnProps> = ({ options, onChange, countRow, showErro
         <div className="option-list">
             {renderOptions()}
             {hasCustomField ? renderCustomField : null}
+
+            <Button variant="contained" fullWidth onClick={addOption}>
+                Add Option
+            </Button>
         </div>
     )
 }

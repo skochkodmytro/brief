@@ -1,33 +1,47 @@
 import React, { FC } from 'react';
+import { Controller, useFormContext } from "react-hook-form";
+
 import { TextInput } from "../TextInput/TextInput";
 
 import './QuestionNaming.css';
 
 type OwnProps = {
-    question: QuestionType
-    showErrors: boolean
-
-    onChangeName: (name: string) => void
-    onChangeDescription: (description: string) => void
+    index: number
 }
 
-export const QuestionNaming: FC<OwnProps> = ({ question, showErrors, onChangeName, onChangeDescription }) => {
+export const QuestionNaming: FC<OwnProps> = ({ index }) => {
+    const { control } = useFormContext();
+
     return (
         <div className="naming-container">
             <div className="naming-item">
-                <TextInput
-                    error={showErrors && !question.name}
-                    value={question.name}
-                    onChange={onChangeName}
-                    placeholder="Question name"
+                <Controller
+                    control={control}
+                    name={`questions.${index}.name`}
+                    rules={{ required: true }}
+                    render={({ field, fieldState }) => (
+                        <TextInput
+                            error={fieldState.isDirty && fieldState.invalid}
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Question name"
+                        />
+                    )}
                 />
             </div>
             <div className="naming-item">
-                <TextInput
-                    value={question.description}
-                    onChange={onChangeDescription}
-                    fontSize={18}
-                    placeholder="Question description"
+                <Controller
+                    control={control}
+                    name={`questions.${index}.description`}
+                    render={({ field, fieldState }) => (
+                        <TextInput
+                            error={fieldState.isDirty && fieldState.invalid}
+                            value={field.value}
+                            onChange={field.onChange}
+                            fontSize={18}
+                            placeholder="Question description"
+                        />
+                    )}
                 />
             </div>
         </div>

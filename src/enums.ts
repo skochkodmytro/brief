@@ -5,3 +5,9 @@ export enum QuestionTypesEnum {
     Number,
     Checkbox
 }
+
+export enum FetchStatus {
+    PENDING,
+    SUCCESS,
+    FAILURE
+}

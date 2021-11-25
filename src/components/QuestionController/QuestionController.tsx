@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { FormControlLabel, Checkbox, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Controller, useFormContext } from "react-hook-form";
 
 import './QuestionController.css';
 
@@ -8,21 +9,12 @@ import { QuestionTypesEnum } from "../../enums";
 
 type OwnProps = {
     question: QuestionType
-
-    removeQuestion: () => void
-    onChange: (question: QuestionType) => void
+    index: number
 }
 
 export const QuestionController: FC<OwnProps> = ({ question,
-                                                     onChange, removeQuestion }) => {
-
-    const changeRequired = () => {
-        onChange({ ...question, isRequired: !question.isRequired });
-    }
-
-    const handleChangeCountRow = (event: React.MouseEvent<HTMLElement>, value: number) => {
-        onChange({ ...question, countRow: value });
-    }
+                                                    index }) => {
+    const { control } = useFormContext();
 
     const renderQuestionType = () => {
         switch (question.questionType) {
@@ -41,47 +33,60 @@ export const QuestionController: FC<OwnProps> = ({ question,
         }
     }
 
-    const toggleCanBeCustomField = () => {
-        onChange({ ...question, hasCustomFieldForFill: !question.hasCustomFieldForFill });
-    }
-
     const renderCheckboxCustomControls = () => (
         <>
             <div className="controller-item">
-                <FormControlLabel
-                    control={<Checkbox checked={question.hasCustomFieldForFill} onChange={toggleCanBeCustomField} />}
-                    label="Fill custom field"
+                <Controller
+                    control={control}
+                    name={`questions.${index}.hasCustomFieldForFill`}
+                    render={({ field }) => (
+                        <FormControlLabel
+                            control={<Checkbox checked={field.value} onChange={field.onChange} />}
+                            label="Fill custom field"
+                        />
+                    )}
                 />
             </div>
             <div className="controller-item">
-                <ToggleButtonGroup
-                    color="primary"
-                    exclusive
-                    value={question.countRow}
-                    onChange={handleChangeCountRow}
-                >
-                    <ToggleButton value={1}>1</ToggleButton>
-                    <ToggleButton value={2}>2</ToggleButton>
-                </ToggleButtonGroup>
+                <Controller
+                    control={control}
+                    name={`questions.${index}.countRow`}
+                    render={({ field }) => (
+                        <ToggleButtonGroup
+                            color="primary"
+                            exclusive
+                            value={field.value}
+                            onChange={field.onChange}
+                        >
+                            <ToggleButton value={'1'}>1</ToggleButton>
+                            <ToggleButton value={'2'}>2</ToggleButton>
+                        </ToggleButtonGroup>
+                    )}
+                />
             </div>
         </>
     )
 
     return (
         <div className="question-controller">
-            {question.questionType === QuestionTypesEnum.Checkbox ? renderCheckboxCustomControls() : null}
-            <div className="controller-item">
+            <div className="controller-item controller-item-type">
                 {renderQuestionType()}
             </div>
+            {question.questionType === QuestionTypesEnum.Checkbox ? renderCheckboxCustomControls() : null}
             <div className="controller-item">
-                <FormControlLabel
-                    control={<Checkbox onChange={changeRequired} checked={question.isRequired} />}
-                    label="Required"
+                <Controller
+                    control={control}
+                    name={`questions.${index}.isRequired`}
+                    render={({ field }) => (
+                        <FormControlLabel
+                            control={<Checkbox onChange={field.onChange} checked={field.value} />}
+                            label="Required"
+                        />
+                    )}
                 />
             </div>
             <div className="controller-item">
                 <DeleteIcon
-                    onClick={removeQuestion}
                     style={{ color: 'white', fontSize: 24, cursor: 'pointer' }}
                 />
             </div>

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 import { TextField } from "@mui/material";
 
 import './TextInput.css';
@@ -11,6 +11,7 @@ type OwnProps = {
     style?: React.CSSProperties
     fullWidth?: boolean
     error?: boolean
+    type?: string
 
     onChange: (value: string) => void
 }
@@ -18,6 +19,7 @@ type OwnProps = {
 export const TextInput: FC<OwnProps> = ({ value,
                                             onChange,
                                             style= {},
+                                            type= 'text',
                                             error = false,
                                             fullWidth= true,
                                             placeholder }) => {
@@ -30,6 +32,7 @@ export const TextInput: FC<OwnProps> = ({ value,
         <TextField
             label={placeholder}
             style={{ ...style }}
+            type={type}
             size="medium"
             multiline
             fullWidth={fullWidth}

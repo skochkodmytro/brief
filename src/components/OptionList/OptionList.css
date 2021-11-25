@@ -22,6 +22,7 @@
 .option-item-custom-field {
     display: flex;
     align-items: center;
+    padding-left: 27px;
 }
 
 .custom-field-checkbox {

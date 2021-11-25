@@ -1,54 +1,37 @@
 import React, { ChangeEvent, FC, useRef } from 'react';
 import { FileImageOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Card, CardContent, Checkbox } from "@mui/material";
 
 import './OptionItem.css';
+
 import { TextInput } from "../TextInput/TextInput";
 import { ImagePreview } from "../ImagePreview/ImagePreview";
 
 type OwnProps = {
-    option: OptionType
     index: number
+    questionIndex: number
     canBeDelete: boolean
-    showErrors: boolean
-
-    onChange: (option: OptionType) => void
-    onDelete: () => void
 }
 
-export const OptionItem: FC<OwnProps> = ({ option, index,
-                                             showErrors,
-                                             canBeDelete,
-                                             onChange, onDelete }) => {
+export const OptionItem: FC<OwnProps> = ({ index, questionIndex, canBeDelete}) => {
+    const { control, setValue } = useFormContext();
     const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleChangeName = (name: string) => {
-        onChange({ ...option, name });
-    }
-
-    const handleChangeDefaultChecked = () => {
-        onChange({ ...option, defaultIsChecked: !option.defaultIsChecked });
-    }
-
-    const handleDeleteOption = () => {
-        onDelete();
-    }
-
-    const handleChangeImage = (e: ChangeEvent) => {
-        const input = e.target as HTMLInputElement;
-        if (input.files) {
-            onChange({ ...option, image: input.files[0] })
-        }
-    }
+    const option = useWatch({
+        name: `questions.${questionIndex}.options.${index}`,
+        control
+    });
 
     const openInputElementOrDeleteImage = () => {
-        if (option.image) {
-            onChange({ ...option, image: null });
-            return;
-        }
-
         if (inputRef.current) {
             inputRef.current.click();
+        }
+    }
+
+    const onChangeImage = (e: ChangeEvent) => {
+        const input = e.target as HTMLInputElement;
+        if (input.files) {
+            setValue(`questions.${questionIndex}.options.${index}.image`, input.files[0]);
         }
     }
 
@@ -62,14 +45,30 @@ export const OptionItem: FC<OwnProps> = ({ option, index,
             <CardContent>
                 <div className="option-container">
                     <div>
-                        <Checkbox checked={option.defaultIsChecked} onChange={handleChangeDefaultChecked} />
+                        <Controller
+                            control={control}
+                            name={`questions.${questionIndex}.options.${index}.defaultIsChecked`}
+                            render={({ field }) => (
+                                <Checkbox
+                                    checked={field.value}
+                                    onChange={field.onChange}
+                                />
+                            )}
+                        />
                     </div>
                     <div className="option-container-input">
-                        <TextInput
-                            error={showErrors && !option.name}
-                            value={option.name}
-                            placeholder={'Option ' + (index + 1)}
-                            onChange={handleChangeName}
+                        <Controller
+                            control={control}
+                            name={`questions.${questionIndex}.options.${index}.name`}
+                            rules={{ required: true }}
+                            render={({ field, fieldState }) => (
+                                <TextInput
+                                    error={fieldState.isDirty && fieldState.invalid}
+                                    value={field.value}
+                                    placeholder={'Option ' + (index + 1)}
+                                    onChange={field.onChange}
+                                />
+                            )}
                         />
                     </div>
                     <div className="option-container-right">
@@ -77,14 +76,14 @@ export const OptionItem: FC<OwnProps> = ({ option, index,
                             type="file"
                             className="option-input-file"
                             ref={inputRef}
-                            onChange={handleChangeImage}
+                            onChange={onChangeImage}
                         />
                         <div className="option-container-icon" onClick={openInputElementOrDeleteImage}>
                             <FileImageOutlined />
                         </div>
                         {
                             canBeDelete &&
-                            <div className="option-container-icon" onClick={handleDeleteOption}>
+                            <div className="option-container-icon">
                                 <DeleteOutlined />
                             </div>
                         }
@@ -94,40 +93,3 @@ export const OptionItem: FC<OwnProps> = ({ option, index,
         </Card>
     )
 }
-
-// <Card>
-//     {option.image &&
-//         <div className="option-preview-container">
-//             <ImagePreview file={option.image} />
-//         </div>
-//     }
-//     <div className="option-container">
-//         <div>
-//             <Checkbox checked={option.defaultIsChecked} onChange={handleChangeDefaultChecked} />
-//         </div>
-//         <div className="option-container-input">
-//             <TextInput
-//                 value={option.name}
-//                 placeholder={'Option ' + (index + 1)}
-//                 onChange={handleChangeName}
-//             />
-//         </div>
-//         <div className="option-container-right">
-//             <input
-//                 type="file"
-//                 className="option-input-file"
-//                 ref={inputRef}
-//                 onChange={handleChangeImage}
-//             />
-//             <div className="option-container-icon" onClick={openInputElementOrDeleteImage}>
-//                 <FileImageOutlined />
-//             </div>
-//             {
-//                 canBeDelete &&
-//                 <div className="option-container-icon" onClick={handleDeleteOption}>
-//                     <DeleteOutlined />
-//                 </div>
-//             }
-//         </div>
-//     </div>
-// </Card>

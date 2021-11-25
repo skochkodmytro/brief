@@ -1,86 +1,47 @@
 import React, { FC } from 'react';
 import { Card } from "@mui/material";
 
+import './QuestionContiner.css';
+
 import { QuestionController } from "../QuestionController/QuestionController";
 import { QuestionNaming } from "../QuestionNaming/QuestionNaming";
 import { QuestionTypesEnum } from "../../enums";
-import { TextQuestion } from "../TextQuestion/TextQuestion";
 import { DateQuestion } from "../DateQuestion/DateQuestion";
 import { SliderQuestion } from "../SliderQuestion/SliderQuestion";
-import { NumberQuestion } from "../NmberQuestion/NmberQuestion";
 import { CheckboxQuestion } from "../CheckboxQuestion/CheckboxQuestion";
 
 type OwnProps = {
-    question: QuestionType
+    question: any
     index: number
-    showErrors: boolean
-
-    changeQuestion: (question: QuestionType) => void
-    removeQuestion: (index: number) => void
 }
 
-export const QuestionContainer: FC<OwnProps> = ({ question, index, changeQuestion,
-                                                    showErrors,
-                                                    removeQuestion }) => {
-
-    const handleChangeNameQuestion = (name: string) => {
-        changeQuestion({ ...question, name });
-    }
-
-    const handleChangeDescriptionQuestion = (description: string) => {
-        changeQuestion({ ...question, description });
-    }
-
-    const handleRemoveQuestion = () => {
-        removeQuestion(index);
-    }
-
-    const handleChangeCheckboxQuestion = (updatedQuestion: QuestionType) => {
-        changeQuestion(updatedQuestion);
-    }
-
-    const handleChangeController = (question: QuestionType) => {
-        changeQuestion(question);
-    }
-
+export const QuestionContainer: FC<OwnProps> = ({ question, index }) => {
     const renderQuestionType = () => {
         switch (question.questionType) {
-            case QuestionTypesEnum.Text:
-                return <TextQuestion question={question} />
             case QuestionTypesEnum.Date:
-                return <DateQuestion question={question} />
+                return <DateQuestion index={index} />
             case QuestionTypesEnum.Slider:
-                return <SliderQuestion
-                    question={question}
-                    showErrors={showErrors}
-                    onChangeQuestion={(q: QuestionType) => changeQuestion(q)}
-                />
-            case QuestionTypesEnum.Number:
-                return <NumberQuestion />
+                return <SliderQuestion index={index} />
             case QuestionTypesEnum.Checkbox:
-                return <CheckboxQuestion showErrors={showErrors} question={question} onChange={handleChangeCheckboxQuestion} />
+                return <CheckboxQuestion index={index} />
             default:
-                return <div>Some unknown type</div>
+                return null
         }
     }
 
     return (
-        <div className="text-question-container">
+        <div className="question-container">
             <Card sx={{
                 bgcolor: 'background.paper',
                 boxShadow: 5,
             }}>
                 <QuestionController
                     question={question}
-                    onChange={handleChangeController}
-                    removeQuestion={handleRemoveQuestion}
+                    index={index}
                 />
                 <div className="question-data">
                     <QuestionNaming
-                        question={question}
-                        showErrors={showErrors}
-                        onChangeName={handleChangeNameQuestion}
-                        onChangeDescription={handleChangeDescriptionQuestion}
+                        index={index}
                     />
                     {renderQuestionType()}
                 </div>
