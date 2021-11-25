@@ -15,7 +15,7 @@ export const CreateBriefPage: FC = () => {
         mode: "onChange"
     })
     const { control, handleSubmit, formState } = methods;
-    const { fields, append } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control,
         name: "questions",
     });
